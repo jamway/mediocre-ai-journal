@@ -1,0 +1,21 @@
+.widget-card {
+  margin: 24px 0;
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(118, 215, 255, 0.08);
+  border: 1px solid rgba(118, 215, 255, 0.18);
+}
+
+#widget-action {
+  margin-right: 12px;
+  padding: 12px 18px;
+  color: #0a1020;
+  background: #76d7ff;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+#widget-action:hover {
+  background: #58c3f5;
+}

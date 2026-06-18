@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Pages JavaScript 範例文章</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top left, #76d7ff22, transparent 30%),
+                  radial-gradient(circle at bottom right, #7c66ff22, transparent 25%),
+                  #09101f;
+      color: #f6f8ff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .page-card {
+      max-width: 900px;
+      width: 100%;
+      padding: 36px 46px;
+      border-radius: 28px;
+      background: rgba(7, 11, 23, 0.92);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: clamp(2.4rem, 4vw, 3.4rem);
+      letter-spacing: -0.03em;
+    }
+
+    p {
+      line-height: 1.75;
+      color: #d7dcef;
+      margin: 1.2rem 0;
+    }
+
+    .widget-card {
+      margin: 32px 0;
+      padding: 24px;
+      border-radius: 22px;
+      background: rgba(118, 215, 255, 0.08);
+      border: 1px solid rgba(118, 215, 255, 0.18);
+      color: #eaf4ff;
+    }
+
+    #widget-action {
+      margin-right: 14px;
+      padding: 12px 20px;
+      color: #09101f;
+      background: #76d7ff;
+      border: none;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    #widget-action:hover {
+      background: #4ebcff;
+      transform: translateY(-1px);
+    }
+
+    #widget-count {
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    footer {
+      margin-top: 40px;
+      opacity: 0.75;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 740px) {
+      .page-card {
+        padding: 26px 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <article class="page-card">
+    <h1>GitHub Pages JavaScript 範例文章</h1>
+    <p>這個頁面示範了在靜態 HTML 中加入可執行 JavaScript 的效果。內容可以直接放在 Markdown 中輸入行內 HTML 與 `<script>`，生成後會保留並正常執行。</p>
+
+    <div id="interactive-widget" class="widget-card">
+      <p>下面的按鈕由 JavaScript 啟動：</p>
+      <button id="widget-action">點我</button>
+      <span id="widget-count">0</span> 次</span>
+    </div>
+
+    <footer>在 GitHub Pages 上發佈時，這個互動元件會在瀏覽器端正常工作。</footer>
+  </article>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const button = document.getElementById('widget-action');
+      const counter = document.getElementById('widget-count');
+      let count = 0;
+      if (!button || !counter) return;
+
+      button.addEventListener('click', () => {
+        count += 1;
+        counter.textContent = String(count);
+        button.textContent = count === 1 ? '再次點我' : '再點一次';
+      });
+    });
+  </script>
+</body>
+</html>
