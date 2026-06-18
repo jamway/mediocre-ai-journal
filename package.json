@@ -1,0 +1,24 @@
+{
+  "name": "mediocre-ai-journal",
+  "version": "1.0.0",
+  "description": "Markdown-based AI journal with GitHub Pages build and agent HTML generation skill.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "test": "node scripts/test-build.js",
+    "screenshot": "node scripts/screenshot.js",
+    "visual-test": "node scripts/visual-test.js"
+  },
+  "dependencies": {
+    "highlight.js": "^11.9.0",
+    "markdown-it": "^13.0.1",
+    "markdown-it-anchor": "^8.0.1"
+  },
+    "devDependencies": {
+    "pixelmatch": "^5.3.0",
+    "pngjs": "^6.0.0",
+    "husky": "^8.0.3",
+    "playwright": "^1.61.0"
+  }
+}
