@@ -333,9 +333,10 @@ export async function buildSite() {
     pages.push({ title, url: `./${outputName}`, excerpt: extractExcerpt(fileContent) });
   }
 
-  // Step 4: Generate index (landing) page listing all pages
+  // Step 4: Generate index (landing) page listing only blog posts
+  const blogPages = pages.filter((page) => page.url.startsWith('./blog/'));
   const indexFile = path.join(OUT_DIR, 'index.html');
-  fs.writeFileSync(indexFile, renderIndex(pages));
+  fs.writeFileSync(indexFile, renderIndex(blogPages));
   
   // Step 5: Generate static assets
   // CSS: Global stylesheet with dark theme and typography
@@ -343,8 +344,8 @@ export async function buildSite() {
   // JS: Client-side theme toggler script
   fs.writeFileSync(path.join(OUT_DIR, 'assets', 'site.js'), renderScript());
   
-  // Step 6: Generate 404.html fallback (shows page list on 404 errors)
-  fs.writeFileSync(path.join(OUT_DIR, '404.html'), renderIndex(pages));
+  // Step 6: Generate 404.html fallback (shows blog post list on 404 errors)
+  fs.writeFileSync(path.join(OUT_DIR, '404.html'), renderIndex(blogPages));
 
   return { pages };
 }
