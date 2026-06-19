@@ -54,6 +54,8 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
     steps:
       - name: Configure Pages
         # Prepares the Pages deployment environment
