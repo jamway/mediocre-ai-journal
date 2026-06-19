@@ -1,58 +1,68 @@
-name: Build and deploy GitHub Pages
+name: Build and deploy GitHub Pages (artifact-based)
 
-permissions:
-  contents: write
-  pages: write
-
+# Use the official Pages actions to upload the generated `out/` artifact
+# and deploy it directly to GitHub Pages without creating a `gh-pages` branch.
 on:
   push:
-    branches: [main]
-    paths:
-      - '**/*.md'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'scripts/**'
-      - '.github/workflows/pages.yml'
-      - 'skills/**'
+    branches: [ main ]
   pull_request:
-    branches: [main]
-    paths:
-      - '**/*.md'
-      - 'package.json'
-      - 'package-lock.json'
-      - 'scripts/**'
-      - '.github/workflows/pages.yml'
-      - 'skills/**'
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  # `pages: write` is required to deploy the artifact to Pages
+  pages: write
+  # `id-token: write` is useful for OIDC flows if you later need them
+  id-token: write
+  # read access to repository contents for the build step
+  contents: read
+
+# Avoid concurrent deployments stepping on each other
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
+  # Build job: install deps, run tests, and generate the static site under `out/`
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: npm install
-      - run: npm test
 
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build site
+        run: npm run build
+
+      - name: Upload Pages artifact
+        # Upload the generated `out/` directory as the Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './out'
+
+  # Deploy job: consumes the uploaded artifact and publishes to Pages
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: true
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-      - run: npm install
-      - run: npm run build
+      - name: Configure Pages
+        # Prepares the Pages deployment environment
+        uses: actions/configure-pages@v5
+
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          publish_dir: ./out
-          publish_branch: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          user_name: github-actions[bot]
-          user_email: github-actions[bot]@users.noreply.github.com
+        id: deployment
+        # This step automatically picks up the artifact uploaded by the build job
+        uses: actions/deploy-pages@v5
+
+      - name: Output published URL
+        run: echo "Published page: ${{ steps.deployment.outputs.page_url }}"
