@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architecture & Workflow · Mediocre AI Journal</title>
+  <meta name="description" content="本文件說明 mediocre-ai-journal 的整體架構、工作流程與代碼組織。">
+  <link rel="stylesheet" href="../assets/style.css">
+  <script type="module" src="../assets/site.js" defer></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="../index.html#top">Mediocre AI Journal</a>
+      <button class="theme-toggle" data-action="toggle-theme">切換主題</button>
+    </header>
+    <main class="page-content">
+      <article class="markdown-body">
+        <h1 id="architecture-%26-workflow" tabindex="-1">Architecture &amp; Workflow <a class="anchor-link" href="#architecture-%26-workflow">§</a></h1>
+<p>本文件說明 mediocre-ai-journal 的整體架構、工作流程與代碼組織。</p>
+<h2 id="%E9%AB%98%E5%B1%A4%E6%AC%A1%E6%B5%81%E7%A8%8B%E5%9C%96" tabindex="-1">高層次流程圖 <a class="anchor-link" href="#%E9%AB%98%E5%B1%A4%E6%AC%A1%E6%B5%81%E7%A8%8B%E5%9C%96">§</a></h2>
+<pre class="hljs"><code>┌─────────────────────────────────────────────────────────────┐
+│                     開發者工作流程                           │
+└─────────────────────────────────────────────────────────────┘
+
+1. 編輯 Markdown
+   ├─ blog/*.md (Markdown 文章)
+   ├─ README.md (首頁內容)
+   └─ docs/*.md (文檔)
+
+2. 本地驗證 (Pre-Commit Hook via Husky)
+   ├─ npm test → 檢查構建
+   └─ npm run build → 產生 HTML
+
+3. 提交到 Git
+   └─ git commit/push → 觸發 GitHub Actions
+
+4. CI/CD Pipeline (GitHub Actions)
+   ├─ .github/workflows/pages.yml (Pages 發佈)
+   │  ├─ npm ci (安裝依賴)
+   │  ├─ npm test (驗證構建)
+   │  ├─ npm run build (產生靜態網站)
+   │  └─ 發佈 out/ → gh-pages 分支
+   │
+   └─ .github/workflows/visual-tests.yml (視覺測試)
+      ├─ npm ci (安裝依賴)
+      ├─ npx playwright install (下載瀏覽器)
+      ├─ npm run build (產生網站)
+      ├─ npm run screenshot (截圖)
+      └─ npm run visual-test (比對 baseline)
+
+5. GitHub Pages 發佈
+   └─ https://&lt;user&gt;.github.io/mediocre-ai-journal/ 自動上線
+</code></pre>
+<h2 id="%E4%BB%A3%E7%A2%BC%E7%B5%90%E6%A7%8B%E8%88%87%E7%B5%84%E4%BB%B6%E8%AA%AA%E6%98%8E" tabindex="-1">代碼結構與組件說明 <a class="anchor-link" href="#%E4%BB%A3%E7%A2%BC%E7%B5%90%E6%A7%8B%E8%88%87%E7%B5%84%E4%BB%B6%E8%AA%AA%E6%98%8E">§</a></h2>
+<h3 id="%E7%9B%AE%E9%8C%84%E6%A8%B9%E7%8B%80%E5%9C%96" tabindex="-1">目錄樹狀圖 <a class="anchor-link" href="#%E7%9B%AE%E9%8C%84%E6%A8%B9%E7%8B%80%E5%9C%96">§</a></h3>
+<pre class="hljs"><code>mediocre-ai-journal/
+├── README.md                    # 專案說明與使用指南
+├── blog/                        # Blog 文章目錄
+│   ├── sample-post.md           # 範例 Markdown 文章
+│   └── sample-post.html         # 手寫範例 HTML（展示輸出樣式）
+├── docs/                        # 項目文檔
+│   ├── visual-testing.md        # 視覺測試說明
+│   └── pre-commit-hooks.md      # Pre-commit Hook 說明
+├── scripts/                     # 構建與測試腳本
+│   ├── build.js                 # [核心] Markdown → HTML 轉換器
+│   ├── test-build.js            # 構建驗證腳本
+│   ├── screenshot.js            # Playwright 截圖工具
+│   └── visual-test.js           # 像素比對視覺測試
+├── tests/                       # 測試相關
+│   └── baseline/                # 視覺測試 baseline 截圖
+│       └── sample-post.png      # 參考截圖
+├── out/                         # 生成的靜態網站（發佈到 gh-pages）
+│   ├── index.html               # 首頁
+│   ├── blog/sample-post.html    # 文章頁面
+│   ├── assets/                  # 靜態資源
+│   │   ├── style.css            # 生成的全站樣式
+│   │   └── site.js              # 生成的全站 JavaScript
+│   └── 404.html                 # 404 頁面
+├── .github/
+│   └── workflows/               # GitHub Actions 工作流程
+│       ├── pages.yml            # Pages 自動發佈工作流程
+│       └── visual-tests.yml     # 視覺測試工作流程
+├── .husky/                      # Pre-commit hooks 配置
+│   └── pre-commit               # Pre-commit 驗證腳本
+├── skills/                      # Agent skill 文檔
+│   └── frontend-slides.skill.md # 前端幻燈片 skill 說明
+├── package.json                 # Node.js 依賴與腳本定義
+└── .gitignore                   # Git 忽略清單
+</code></pre>
+<h3 id="%E9%97%9C%E9%8D%B5%E7%B5%84%E4%BB%B6%E8%AA%AA%E6%98%8E" tabindex="-1">關鍵組件說明 <a class="anchor-link" href="#%E9%97%9C%E9%8D%B5%E7%B5%84%E4%BB%B6%E8%AA%AA%E6%98%8E">§</a></h3>
+<h4 id="1.-build-pipeline-(scripts%2Fbuild.js)" tabindex="-1">1. Build Pipeline (<code>scripts/build.js</code>) <a class="anchor-link" href="#1.-build-pipeline-(scripts%2Fbuild.js)">§</a></h4>
+<ul>
+<li><strong>輸入</strong>：repo 根目錄與 <code>blog/</code> 下的所有 <code>.md</code> 檔案</li>
+<li><strong>處理</strong>：
+<ul>
+<li>使用 <code>markdown-it</code> + <code>markdown-it-anchor</code> 將 Markdown 轉為 HTML</li>
+<li>使用 <code>highlight.js</code> 進行代碼高亮</li>
+<li>為每頁生成一致的 HTML 樣版（header、footer、navigation）</li>
+<li>輸出 <code>out/assets/style.css</code> 與 <code>out/assets/site.js</code></li>
+</ul>
+</li>
+<li><strong>輸出</strong>：<code>out/</code> 目錄中的靜態 HTML 網站</li>
+</ul>
+<h4 id="2.-%E6%B8%AC%E8%A9%A6%E9%A9%97%E8%AD%89-(scripts%2Ftest-build.js)" tabindex="-1">2. 測試驗證 (<code>scripts/test-build.js</code>) <a class="anchor-link" href="#2.-%E6%B8%AC%E8%A9%A6%E9%A9%97%E8%AD%89-(scripts%2Ftest-build.js)">§</a></h4>
+<ul>
+<li><strong>目的</strong>：確保每個 Markdown 檔案都正確轉換成 HTML</li>
+<li><strong>流程</strong>：掃描 repo 中的 <code>.md</code>、逐一檢查 <code>out/</code> 中的對應 <code>.html</code></li>
+<li><strong>失敗時</strong>：回傳非零 exit code，阻止 CI 繼續</li>
+</ul>
+<h4 id="3.-%E8%A6%96%E8%A6%BA%E6%88%AA%E5%9C%96-(scripts%2Fscreenshot.js)" tabindex="-1">3. 視覺截圖 (<code>scripts/screenshot.js</code>) <a class="anchor-link" href="#3.-%E8%A6%96%E8%A6%BA%E6%88%AA%E5%9C%96-(scripts%2Fscreenshot.js)">§</a></h4>
+<ul>
+<li><strong>目的</strong>：用 Headless browser 對頁面進行視口截圖</li>
+<li><strong>流程</strong>：使用 Playwright 打開本地 HTML、等待內容載入、拍照</li>
+<li><strong>輸出</strong>：<code>out/blog/sample-post.png</code>（或指定的任意頁面）</li>
+<li><strong>用途</strong>：為視覺回歸測試建立參考截圖</li>
+</ul>
+<h4 id="4.-%E8%A6%96%E8%A6%BA%E6%AF%94%E5%B0%8D-(scripts%2Fvisual-test.js)" tabindex="-1">4. 視覺比對 (<code>scripts/visual-test.js</code>) <a class="anchor-link" href="#4.-%E8%A6%96%E8%A6%BA%E6%AF%94%E5%B0%8D-(scripts%2Fvisual-test.js)">§</a></h4>
+<ul>
+<li><strong>目的</strong>：比對當前截圖與 baseline，檢測視覺回歸</li>
+<li><strong>流程</strong>：
+<ul>
+<li>讀取 <code>tests/baseline/sample-post.png</code> 與 <code>out/blog/sample-post.png</code></li>
+<li>使用 <code>pixelmatch</code> 逐像素比對</li>
+<li>輸出 diff 圖到 <code>out/blog/sample-post-diff.png</code></li>
+<li>若差異超過閾值（預設 0.2%），回傳非零 exit code</li>
+</ul>
+</li>
+<li><strong>用途</strong>：在 CI 中自動檢測樣式變動</li>
+</ul>
+<h4 id="5.-pre-commit-hook-(.husky%2Fpre-commit)" tabindex="-1">5. Pre-Commit Hook (<code>.husky/pre-commit</code>) <a class="anchor-link" href="#5.-pre-commit-hook-(.husky%2Fpre-commit)">§</a></h4>
+<ul>
+<li><strong>觸發時機</strong>：開發者執行 <code>git commit</code> 時</li>
+<li><strong>動作</strong>：執行 <code>npm test &amp;&amp; npm run build</code></li>
+<li><strong>失敗行為</strong>：若驗證失敗，commit 被阻止（開發者需修正後重試）</li>
+</ul>
+<h4 id="6.-github-actions-workflows" tabindex="-1">6. GitHub Actions Workflows <a class="anchor-link" href="#6.-github-actions-workflows">§</a></h4>
+<h5 id="pages.yml-(pages-%E7%99%BC%E4%BD%88%E6%B5%81%E7%A8%8B)" tabindex="-1"><code>pages.yml</code> (Pages 發佈流程) <a class="anchor-link" href="#pages.yml-(pages-%E7%99%BC%E4%BD%88%E6%B5%81%E7%A8%8B)">§</a></h5>
+<ul>
+<li><strong>觸發</strong>：Push 到 <code>main</code> 分支或 PR</li>
+<li><strong>步驟</strong>：
+<ol>
+<li>檢出代碼</li>
+<li>安裝 Node.js 與依賴</li>
+<li>執行 <code>npm test</code>（驗證）</li>
+<li>執行 <code>npm run build</code>（產生網站）</li>
+<li>使用 <code>peaceiris/actions-gh-pages</code> 自動發佈 <code>out/</code> 到 <code>gh-pages</code> 分支</li>
+</ol>
+</li>
+<li><strong>結果</strong>：網站自動上線到 GitHub Pages</li>
+</ul>
+<h5 id="visual-tests.yml-(%E8%A6%96%E8%A6%BA%E6%B8%AC%E8%A9%A6%E6%B5%81%E7%A8%8B)" tabindex="-1"><code>visual-tests.yml</code> (視覺測試流程) <a class="anchor-link" href="#visual-tests.yml-(%E8%A6%96%E8%A6%BA%E6%B8%AC%E8%A9%A6%E6%B5%81%E7%A8%8B)">§</a></h5>
+<ul>
+<li><strong>觸發</strong>：PR 與 Push</li>
+<li><strong>步驟</strong>：
+<ol>
+<li>檢出代碼</li>
+<li>安裝 Node.js、依賴、Playwright 瀏覽器</li>
+<li>執行 <code>npm run build</code></li>
+<li>執行 <code>npm run screenshot</code></li>
+<li>執行 <code>npm run visual-test</code></li>
+<li>上傳 artifact（diff 與 current 截圖）</li>
+</ol>
+</li>
+<li><strong>失敗時</strong>：Job 失敗，reviewer 可檢視 artifacts 判斷是否接受修改</li>
+</ul>
+<h2 id="%E6%95%B8%E6%93%9A%E6%B5%81%E5%90%91%E5%9C%96" tabindex="-1">數據流向圖 <a class="anchor-link" href="#%E6%95%B8%E6%93%9A%E6%B5%81%E5%90%91%E5%9C%96">§</a></h2>
+<pre class="hljs"><code>Markdown Files
+(blog/*.md, README.md)
+        ↓
+    [build.js]
+    ├─ markdown-it 解析
+    ├─ highlight.js 高亮代碼
+    ├─ markdown-it-anchor 生成錨點
+    └─ 使用樣版生成 HTML
+        ↓
+    Static HTML Website
+    (out/index.html, out/blog/*.html)
+        ↓
+    ├─ [Local Preview] (瀏覽器打開或本地伺服器)
+    │   └─ 開發者手動檢驗
+    │
+    ├─ [GitHub Pages] (CI 自動發佈)
+    │   └─ https://user.github.io/repo/
+    │
+    └─ [Visual Tests] (CI 自動測試)
+        ├─ [screenshot.js] → out/blog/sample-post.png
+        ├─ [visual-test.js] → 與 tests/baseline/sample-post.png 比對
+        └─ [Artifact Upload] → 用於 PR review
+</code></pre>
+<h2 id="%E9%96%8B%E7%99%BC%E5%BE%AA%E7%92%B0" tabindex="-1">開發循環 <a class="anchor-link" href="#%E9%96%8B%E7%99%BC%E5%BE%AA%E7%92%B0">§</a></h2>
+<pre class="hljs"><code>1. 編輯 Markdown
+   ↓
+2. Pre-commit Hook 自動驗證
+   ├─ npm test ✓
+   └─ npm run build ✓
+   ↓
+3. git commit 成功
+   ↓
+4. git push origin main
+   ↓
+5. GitHub Actions 觸發
+   ├─ Pages Workflow (build + publish)
+   ├─ Visual Tests Workflow (screenshot + pixelmatch)
+   └─ 失敗時 reviewer 檢視 artifacts
+   ↓
+6. GitHub Pages 自動更新
+   ↓
+7. 用戶訪問網站 → 看到最新內容
+</code></pre>
+<h2 id="%E6%8A%80%E8%A1%93%E6%A3%A7" tabindex="-1">技術棧 <a class="anchor-link" href="#%E6%8A%80%E8%A1%93%E6%A3%A7">§</a></h2>
+<table>
+<thead>
+<tr>
+<th>層級</th>
+<th>工具/框架</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Markdown Processing</strong></td>
+<td><code>markdown-it</code></td>
+<td>Markdown → HTML 解析</td>
+</tr>
+<tr>
+<td></td>
+<td><code>markdown-it-anchor</code></td>
+<td>生成目錄錨點</td>
+</tr>
+<tr>
+<td></td>
+<td><code>highlight.js</code></td>
+<td>代碼塊高亮</td>
+</tr>
+<tr>
+<td><strong>Templating</strong></td>
+<td>Vanilla JavaScript</td>
+<td>HTML 樣版生成</td>
+</tr>
+<tr>
+<td><strong>Styling</strong></td>
+<td>Vanilla CSS</td>
+<td>網站樣式（生成於 <code>renderStyleSheet()</code>）</td>
+</tr>
+<tr>
+<td><strong>Browser Automation</strong></td>
+<td><code>playwright</code></td>
+<td>Headless 截圖</td>
+</tr>
+<tr>
+<td><strong>Visual Testing</strong></td>
+<td><code>pixelmatch</code>, <code>pngjs</code></td>
+<td>像素比對與 PNG 處理</td>
+</tr>
+<tr>
+<td><strong>Git Hooks</strong></td>
+<td><code>husky</code></td>
+<td>Pre-commit 驗證自動化</td>
+</tr>
+<tr>
+<td><strong>CI/CD</strong></td>
+<td>GitHub Actions</td>
+<td>自動化 build、test、deploy</td>
+</tr>
+<tr>
+<td><strong>Hosting</strong></td>
+<td>GitHub Pages</td>
+<td>靜態網站發佈</td>
+</tr>
+</tbody>
+</table>
+<h2 id="%E6%93%B4%E5%B1%95%E9%BB%9E" tabindex="-1">擴展點 <a class="anchor-link" href="#%E6%93%B4%E5%B1%95%E9%BB%9E">§</a></h2>
+<p>若要進一步改進：</p>
+<ol>
+<li><strong>搜尋功能</strong>：在 build.js 中生成索引 JSON，前端使用 Lunr.js</li>
+<li><strong>RSS 訂閱</strong>：build.js 產生 <code>feed.xml</code></li>
+<li><strong>評論系統</strong>：集成 Utterances / Disqus</li>
+<li><strong>SEO 優化</strong>：在 HTML header 加入 meta tags、og tags</li>
+<li><strong>圖片優化</strong>：自動壓縮與產生 WebP 格式</li>
+<li><strong>Sitemap</strong>：build.js 產生 <code>sitemap.xml</code></li>
+<li><strong>分析</strong>：加入 Google Analytics 或自託管分析</li>
+</ol>
+
+      </article>
+    </main>
+    <footer class="site-footer">
+      <p>本頁由 GitHub Actions 自動編譯。來源於 <code>docs/architecture.md</code></p>
+    </footer>
+  </div>
+</body>
+</html>

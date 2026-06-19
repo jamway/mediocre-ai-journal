@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frontend Slides Skill · Mediocre AI Journal</title>
+  <meta name="description" content="---">
+  <link rel="stylesheet" href="../assets/style.css">
+  <script type="module" src="../assets/site.js" defer></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="../index.html#top">Mediocre AI Journal</a>
+      <button class="theme-toggle" data-action="toggle-theme">切換主題</button>
+    </header>
+    <main class="page-content">
+      <article class="markdown-body">
+        <hr>
+<h2 id="name%3A-frontend-slidessummary%3A-generate-a-self-contained-html-presentation-from-markdown-content-with-animation-rich-slides-and-fixed-16%3A9-stage-scaling." tabindex="-1">name: frontend-slides
+summary: Generate a self-contained HTML presentation from Markdown content with animation-rich slides and fixed 16:9 stage scaling. <a class="anchor-link" href="#name%3A-frontend-slidessummary%3A-generate-a-self-contained-html-presentation-from-markdown-content-with-animation-rich-slides-and-fixed-16%3A9-stage-scaling.">§</a></h2>
+<h1 id="frontend-slides-skill" tabindex="-1">Frontend Slides Skill <a class="anchor-link" href="#frontend-slides-skill">§</a></h1>
+<p>This skill creates polished HTML slide decks from Markdown content and deploys them as a GitHub Pages site. It includes:</p>
+<ul>
+<li>A GitHub Pages build pipeline that compiles Markdown to static HTML.</li>
+<li>A test step that verifies generated output before publishing.</li>
+<li>A self-contained HTML slide template using the <code>frontend-slides</code> fixed 16:9 stage model.</li>
+<li>HTML + JavaScript outputs that run in the browser without external build tools.</li>
+</ul>
+<h2 id="usage" tabindex="-1">Usage <a class="anchor-link" href="#usage">§</a></h2>
+<p>Place Markdown files in the repository root and push changes to <code>main</code>.
+The GitHub Action will:</p>
+<ol>
+<li>Install dependencies.</li>
+<li>Run <code>npm test</code> to verify the build.</li>
+<li>Run <code>npm run build</code> to generate HTML into <code>out/</code>.</li>
+<li>Publish <code>out/</code> to the <code>gh-pages</code> branch.</li>
+</ol>
+<h2 id="notes" tabindex="-1">Notes <a class="anchor-link" href="#notes">§</a></h2>
+<ul>
+<li>The skill stores build assets in <code>out/assets</code>.</li>
+<li>The site uses <code>highlight.js</code> for code blocks and <code>markdown-it</code> for Markdown rendering.</li>
+<li>The deploy workflow is configured in <code>.github/workflows/pages.yml</code>.</li>
+</ul>
+
+      </article>
+    </main>
+    <footer class="site-footer">
+      <p>本頁由 GitHub Actions 自動編譯。來源於 <code>skills/frontend-slides.skill.md</code></p>
+    </footer>
+  </div>
+</body>
+</html>

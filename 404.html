@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mediocre AI Journal</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <script type="module" src="assets/site.js" defer></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <div>
+        <h1>Mediocre AI Journal</h1>
+        <p>自動編譯 Markdown 為 GitHub Pages 靜態網站。</p>
+      </div>
+      <button class="theme-toggle" data-action="toggle-theme">切換主題</button>
+    </header>
+    <main class="page-content">
+      <section class="hero">
+        <p>更新 Markdown 後，GitHub Actions 會編譯並發布靜態頁面。</p>
+      </section>
+      <section class="page-list">
+        <h2>已生成頁面</h2>
+        <ul>
+      <li>
+        <a class="page-link" href="./index.html">還不完全的AI筆記</a>
+        <p class="excerpt">2026的某天，我父親在Line上問了我對AI的發展或將來對人類的影響有什麼看法，我花了點時間回答這個問題-但最後我對於自己的答案不甚滿意。回想過去幾年的經驗，有很多該組織起來的想法因為不斷湧入的新資訊而沒有成形，暫且在這裡記下。</p>
+      </li>
+      <li>
+        <a class="page-link" href="./blog/20260618.html">西元2026年的當下，人們口中的AI讓產出變輕鬆了，品質和穩定性在不斷上升，但同時間雜訊也被放大了很多。資訊量早就爆炸的時代裡，每天用指數成長的AI資訊-無論其來有自或僅僅是大量生產的餿水-確確實實地製造了FOMO (Fear of missing out) 的溫床。</a>
+        <p class="excerpt">---</p>
+      </li>
+      <li>
+        <a class="page-link" href="./blog/sample-post.html">GitHub Pages Blog 範例</a>
+        <p class="excerpt">---</p>
+      </li>
+      <li>
+        <a class="page-link" href="./docs/architecture.html">Architecture & Workflow</a>
+        <p class="excerpt">本文件說明 mediocre-ai-journal 的整體架構、工作流程與代碼組織。</p>
+      </li>
+      <li>
+        <a class="page-link" href="./docs/pre-commit-hooks.html">Pre-Commit Hooks 設定</a>
+        <p class="excerpt">此文件說明如何使用 pre-commit hooks 在推送前驗證程式碼品質與構建完整性。</p>
+      </li>
+      <li>
+        <a class="page-link" href="./docs/visual-testing.html">Visual Testing (視覺測試) 管理說明</a>
+        <p class="excerpt">此文件說明如何在本專案使用 GitHub Actions + Playwright + pixelmatch 執行視覺回歸測試。</p>
+      </li>
+      <li>
+        <a class="page-link" href="./skills/frontend-slides.skill.html">Frontend Slides Skill</a>
+        <p class="excerpt">---</p>
+      </li>
+        </ul>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <p>GitHub Pages 自動部署自 <code>gh-pages</code> 分支。</p>
+    </footer>
+  </div>
+</body>
+</html>

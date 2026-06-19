@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Pages Blog 範例 · Mediocre AI Journal</title>
+  <meta name="description" content="---">
+  <link rel="stylesheet" href="../assets/style.css">
+  <script type="module" src="../assets/site.js" defer></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="site-header">
+      <a class="brand" href="../index.html#top">Mediocre AI Journal</a>
+      <button class="theme-toggle" data-action="toggle-theme">切換主題</button>
+    </header>
+    <main class="page-content">
+      <article class="markdown-body">
+        <hr>
+<h2 id="title%3A-github-pages-javascript-%E7%AF%84%E4%BE%8B%E6%96%87%E7%AB%A0" tabindex="-1">title: GitHub Pages JavaScript 範例文章 <a class="anchor-link" href="#title%3A-github-pages-javascript-%E7%AF%84%E4%BE%8B%E6%96%87%E7%AB%A0">§</a></h2>
+<h1 id="github-pages-blog-%E7%AF%84%E4%BE%8B" tabindex="-1">GitHub Pages Blog 範例 <a class="anchor-link" href="#github-pages-blog-%E7%AF%84%E4%BE%8B">§</a></h1>
+<p>這是一篇 blog 範例文章，展示如何在 Markdown 中嵌入 GitHub Pages 支援的 JavaScript。</p>
+<h2 id="%E7%89%B9%E6%80%A7" tabindex="-1">特性 <a class="anchor-link" href="#%E7%89%B9%E6%80%A7">§</a></h2>
+<ul>
+<li>文章標題與段落</li>
+<li>支援行內 HTML</li>
+<li>可在生成後的 HTML 頁面中執行 JavaScript</li>
+</ul>
+<div id="interactive-widget" class="widget-card">
+  <p>下面的按鈕由 JavaScript 啟動：</p>
+  <button id="widget-action">點我</button>
+  <span id="widget-count">0</span> 次
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const button = document.getElementById('widget-action');
+  const counter = document.getElementById('widget-count');
+  let count = 0;
+  if (!button || !counter) return;
+
+  button.addEventListener('click', () => {
+    count += 1;
+    counter.textContent = String(count);
+    button.textContent = count === 1 ? '再次點我' : '再點一次';
+  });
+});
+</script>
+
+      </article>
+    </main>
+    <footer class="site-footer">
+      <p>本頁由 GitHub Actions 自動編譯。來源於 <code>blog/sample-post.md</code></p>
+    </footer>
+  </div>
+</body>
+</html>
