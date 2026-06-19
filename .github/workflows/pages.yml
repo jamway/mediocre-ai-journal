@@ -65,4 +65,11 @@ jobs:
         uses: actions/deploy-pages@v5
 
       - name: Output published URL
-        run: echo "Published page: ${{ steps.deployment.outputs.page_url }}"
+          run: |
+            # Some deploy actions may not emit a page_url output in all cases.
+            # Check if the output is non-empty and print a helpful message.
+            if [ -n "${{ steps.deployment.outputs.page_url }}" ]; then
+              echo "Published page: ${{ steps.deployment.outputs.page_url }}"
+            else
+              echo "No page_url output from deploy step. Check Actions logs for deploy-pages step." 
+            fi
