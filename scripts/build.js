@@ -201,9 +201,22 @@ function renderStyleSheet() {
   --shadow: 0 24px 60px rgba(81, 69, 53, 0.12);
 }
 
+[data-theme="dark"] {
+  --bg: #f6f0de;
+  --surface: #f5ead9;
+  --surface-muted: rgba(209, 193, 158, 0.38);
+  --text: #4a4338;
+  --muted: #7c6d5f;
+  --accent: #c7a775;
+  --accent-soft: #e9e4d5;
+  --accent-strong: #a98f69;
+  --border: rgba(129, 111, 87, 0.22);
+  --shadow: 0 24px 60px rgba(81, 69, 53, 0.14);
+}
+
 * { box-sizing: border-box; }
 html, body { margin: 0; min-height: 100%; font-family: Inter, system-ui, sans-serif; background: radial-gradient(circle at top, rgba(224, 238, 224, 0.22), transparent 30%), linear-gradient(180deg, #fbf4e9 0%, #f8eee0 100%); color: var(--text); }
-body { line-height: 1.7; }
+body { line-height: 1.7; background: var(--bg); }
 button { font: inherit; }
 img { max-width: 100%; }
 .site-shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 48px; }
@@ -247,10 +260,15 @@ function renderScript() {
   return `const root = document.documentElement;
 const button = document.querySelector('[data-action="toggle-theme"]');
 
+const themeMap = {
+  light: 'dark',
+  dark: 'light'
+};
+
 if (button) {
   button.addEventListener('click', () => {
-    const current = root.getAttribute('data-theme');
-    const next = current === 'light' ? 'dark' : 'light';
+    const current = root.getAttribute('data-theme') || 'light';
+    const next = themeMap[current] || 'light';
     root.setAttribute('data-theme', next);
     localStorage.setItem('site-theme', next);
   });
@@ -259,6 +277,8 @@ if (button) {
 const stored = localStorage.getItem('site-theme');
 if (stored) {
   document.documentElement.setAttribute('data-theme', stored);
+} else {
+  document.documentElement.setAttribute('data-theme', 'light');
 }
 `;
 }
