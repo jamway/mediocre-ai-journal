@@ -1,5 +1,9 @@
 name: Build and deploy GitHub Pages
 
+permissions:
+  contents: write
+  pages: write
+
 on:
   push:
     branches: [main]
@@ -37,9 +41,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
       - run: npm install
       - run: npm run build
       - name: Deploy to GitHub Pages
